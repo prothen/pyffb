@@ -19,8 +19,8 @@ import signal
 import threading
 
 
-from ffb.types import *
-from ffb.thread import *
+from ffb.protocol import *
+from ffb.custom_thread import *
 
 
 @attr.s
@@ -59,8 +59,8 @@ class Interface:
 
     def _initialise_from_yaml(self):
         config_name = self.config_name
-        path = "../config/" if self.config_path is None else self.config_path
         cwd = os.path.dirname(os.path.abspath(__file__))
+        path = "{}/../config".format(cwd) if self.config_path is None else self.config_path
         print("Current absolute path: ", cwd)
         try:
             if config_name is not None:

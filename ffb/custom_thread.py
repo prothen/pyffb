@@ -21,4 +21,3 @@ class ShutdownCompliantThread(threading.Thread):
         finally:
             del self._target, self._args, self._kwargs
         print('Thread #%s stopped' % self.ident)
-<Paste>
