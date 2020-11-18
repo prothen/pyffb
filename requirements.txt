@@ -1,0 +1,5 @@
+attrs
+pyyaml
+numpy
+typing
+
