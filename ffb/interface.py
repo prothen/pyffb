@@ -84,7 +84,6 @@ class Interface:
     def connect(self):
         print('Connecting...')
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 5)
         sock.settimeout(self.timeout)
         self.socket = sock
         print('--> [x] Connected')
