@@ -31,3 +31,10 @@ _Note: This repository can be used irrespective of Windows or UNIX system. The `
 - [Protocol overview](https://cls2sim.brunner-innovation.swiss/protocolv2.htm)
 - [Python struct formats](https://docs.python.org/2/library/struct.html)
 
+## Contributions
+If you have feature requests, questions or you want to contribute, you are very welcome to submit a pull request!
+
+## License
+If you would like to use this code or parts of this code or you are interested in a open source license, let me know under `philipp.rothenhaeusler at gmail.com`.
+
+(c) Copyright 2020 Philipp Rothenhäusler All rights reserved.
