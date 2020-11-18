@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-
+    Interface to Brunner CLS-E force feedback joystick.
 
     Author: Philipp Rothenhäusler, Stockholm 2020
 
@@ -11,7 +11,6 @@ import sys
 import time
 import attr
 import yaml
-import enum
 import numpy
 import typing
 import socket
@@ -19,69 +18,9 @@ import struct
 import signal
 import threading
 
-class Command(enum.IntEnum):
-    DataRead = 0xD0
-    RemoteControlConfig = 0xD8
-    StateControl = 0xCD
-    SettingsControl = 0xCE
-    ProfileControl = 0xCF
-    IO2CANGatewayRead = 0xD2
-    IO2CANGatewayWrite = 0xD6
-    IO2CANGatewaySetTimeout = 0xD7
 
-
-class Axis(enum.IntEnum):
-    X = 0
-    Y = 1
-
-
-class Measurement(enum.IntEnum):
-    Position = 0
-    PositionNormalized = 1
-    AppliedForce = 2
-    AppliedForceNormalized = 3
-    DigitalInputs = 4
-    AnalogInputs = 5
-    VirtualForce = 6
-    Range = 7
-
-
-# Note: Other measurements are added only on demand
-
-measurement2format = dict()
-measurement2format[Measurement.Position] = "h"
-measurement2format[Measurement.PositionNormalized] = "f"
-measurement2format[Measurement.AppliedForce] = "i"
-measurement2format[Measurement.AppliedForceNormalized] = "f"
-measurement2format[Measurement.Range] = "iiii"
-
-
-axis2axis_id = dict()
-axis2axis_id[Axis.X] = 0x01
-axis2axis_id[Axis.Y] = 0x02
-
-
-measurement2data_id = dict()
-measurement2data_id[Measurement.Position] = 0x10
-measurement2data_id[Measurement.PositionNormalized] = 0x11
-measurement2data_id[Measurement.AppliedForce] = 0x20
-measurement2data_id[Measurement.AppliedForceNormalized] = 0x21
-measurement2data_id[Measurement.Range] = 0x60
-
-
-class ShutdownCompliantThread(threading.Thread):
-    def __init__(self, shutdown_request, *args, **kwargs):
-        self.shutdown_request : threading.Event = shutdown_request
-        super().__init__(*args, **kwargs)
-
-    def run(self):
-        print('Thread #%s started' % self.ident)
-        try:
-            if self._target:
-                self._target(*self._args, **self._kwargs, shutdown_request=self.shutdown_request.is_set)
-        finally:
-            del self._target, self._args, self._kwargs
-        print('Thread #%s stopped' % self.ident)
+from ffb.types import *
+from ffb.thread import *
 
 
 @attr.s
@@ -217,7 +156,7 @@ class Interface:
             parsed = struct.unpack('<Iffffffff', response)
             if parsed[0] == 0xAE:
                 self.state[:] = parsed[1:]
-                #print('Parsed received bytes to : \n{}\n'.format(self.state))
+                # print('Parsed received bytes to : \n{}\n'.format(self.state))
         except socket.timeout as e:
             pass
 
