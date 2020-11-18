@@ -7,15 +7,66 @@
 """
 
 import os
+import sys
 import time
 import attr
 import yaml
+import enum
 import numpy
 import typing
 import socket
 import struct
 import signal
 import threading
+
+class Command(enum.IntEnum):
+    DataRead = 0xD0
+    RemoteControlConfig = 0xD8
+    StateControl = 0xCD
+    SettingsControl = 0xCE
+    ProfileControl = 0xCF
+    IO2CANGatewayRead = 0xD2
+    IO2CANGatewayWrite = 0xD6
+    IO2CANGatewaySetTimeout = 0xD7
+
+
+class Axis(enum.IntEnum):
+    X = 0
+    Y = 1
+
+
+class Measurement(enum.IntEnum):
+    Position = 0
+    PositionNormalized = 1
+    AppliedForce = 2
+    AppliedForceNormalized = 3
+    DigitalInputs = 4
+    AnalogInputs = 5
+    VirtualForce = 6
+    Range = 7
+
+
+# Note: Other measurements are added only on demand
+
+measurement2format = dict()
+measurement2format[Measurement.Position] = "h"
+measurement2format[Measurement.PositionNormalized] = "f"
+measurement2format[Measurement.AppliedForce] = "i"
+measurement2format[Measurement.AppliedForceNormalized] = "f"
+measurement2format[Measurement.Range] = "iiii"
+
+
+axis2axis_id = dict()
+axis2axis_id[Axis.X] = 0x01
+axis2axis_id[Axis.Y] = 0x02
+
+
+measurement2data_id = dict()
+measurement2data_id[Measurement.Position] = 0x10
+measurement2data_id[Measurement.PositionNormalized] = 0x11
+measurement2data_id[Measurement.AppliedForce] = 0x20
+measurement2data_id[Measurement.AppliedForceNormalized] = 0x21
+measurement2data_id[Measurement.Range] = 0x60
 
 
 class ShutdownCompliantThread(threading.Thread):
@@ -89,14 +140,69 @@ class Interface:
 
     def _initialise_variables(self):
         self.force = numpy.zeros(8, dtype=numpy.int32)
-        self.state = numpy.zeros(8, dtype=numpy.int32)
+        self.state = numpy.zeros(8, dtype=numpy.float)
 
     def connect(self):
-        print('Establish connection')
+        print('Connecting...')
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 5)
         sock.settimeout(self.timeout)
         self.socket = sock
+        print('--> [x] Connected')
+
+    def _print_message_fields(self, message):
+        for byte in message:
+            print("\t Field: {:02X}".format(byte))
+
+    def _parse_error_message(self, response):
+        # Todo: on demand add error formats
+        print("Received error response")
+        if status == 0x02:
+            pass
+        elif status == 0x04:
+            pass
+        sys.exit(1)
+
+    def read_settings(self, axis : Axis, measurement : Measurement):
+        """
+            Note:
+                This requires message_identifiers to be disabled in CLS2Sim
+
+            Todo:
+                - move to documentation
+                # COMMAND: Uint32 : 0xD0
+                # Axis Uint32 : 0x01 elevator and 0x02 aileron
+                # data id uint32: 0x10 axis position, 0x60 range
+
+                - receive format
+                # First 3 bytes are formated with
+        """
+        data_id = measurement2data_id[measurement]
+        common_format = "HB"
+
+        message = (Command.DataRead, 0x01, data_id)
+        print('Send message:')
+        self._print_message_fields(message)
+        packet = struct.pack('<III', *message)
+        print("Sent {} bytes".format(len(packet)))
+        self.socket.sendto(packet, (self.host, self.port))
+
+        # RECEIVE
+        response, address = self.socket.recvfrom(self.buffer_size)
+        print("Received: {} bytes (from {})".format(len(response), address))
+        status = bytes([response[2]])
+        print("Received status: {:02X}".format(status[0]))
+
+        # Catch error in reading
+        if not (status[0] == 0x00 ):
+            self._parse_error_message(response)
+
+        # Successful request status (expect device_id next)
+        common_format += "H"
+        format = common_format + measurement2format[measurement]
+        message = struct.unpack('<' + format, response)
+        print("Decoded message: ", message)
+        print("--> [x] Received settings.")
 
     def _receive_threaded(self, shutdown_request):
         while not shutdown_request():
@@ -111,13 +217,15 @@ class Interface:
             parsed = struct.unpack('<Iffffffff', response)
             if parsed[0] == 0xAE:
                 self.state[:] = parsed[1:]
-                print('Parsed received bytes to : \n{}'.format(parsed))
+                #print('Parsed received bytes to : \n{}\n'.format(self.state))
         except socket.timeout as e:
             pass
 
     def receive(self, threaded=True):
         if threaded:
-            thread = ShutdownCompliantThread(target=self._receive_threaded, shutdown_request=self._thread_shutdown_request)
+            thread = ShutdownCompliantThread(
+                target=self._receive_threaded,
+                shutdown_request=self._thread_shutdown_request)
             thread.start()
             self._receiver_thread_active = True
         self._receive()
@@ -125,14 +233,24 @@ class Interface:
     def get_state(self):
         return self.state
 
-    def actuate(self, safe=False):
-        # print('Current force request is: \n{}'.format(self.force))
-        if safe:
-            if not input("Confirm with by pressing 'yes'") == "yes":
-                print('Actuation aborted by user request')
-                return
+    def actuate(self, x=0, y=0, safe=True):
+        if safe and not input("Confirm with by pressing 'yes'") == "yes":
+            print('Actuation aborted by user request')
+            return
+        self.force[0] = x
+        self.force[2] = y
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
+        print("Actuated: {}".format(self.force))
+
+    def actuate_test(self, t):
+        fmax = 180
+        frequency = 0.3
+        w = 2 * numpy.pi * frequency
+        x = numpy.sin(w * t) * fmax
+        y = numpy.cos(w * t) * fmax
+        self.actuate(x, y, safe=False)
+
 
     def exit(self):
         self._thread_shutdown_request.set()
@@ -147,17 +265,47 @@ if __name__ == "__main__":
     print('Start module test')
     interface = Interface()
 
+    interface.connect()
+
+    # Test setting retrieval
+    if False:
+            # Position
+            print('Position')
+            interface.read_settings(Axis.X, Measurement.Position)
+            interface.read_settings(Axis.Y, Measurement.Position)
+            # PositionNormalized
+            print('PositionNormalized')
+            interface.read_settings(Axis.X, Measurement.PositionNormalized)
+            interface.read_settings(Axis.Y, Measurement.PositionNormalized)
+            # AppliedForces
+            print('AppliedForces')
+            interface.read_settings(Axis.X, Measurement.AppliedForce)
+            interface.read_settings(Axis.Y, Measurement.AppliedForce)
+            # AppliedForcesNormalized
+            print('AppliedForcesNormalized')
+            interface.read_settings(Axis.X, Measurement.AppliedForceNormalized)
+            interface.read_settings(Axis.Y, Measurement.AppliedForceNormalized)
+            print('Range')
+            interface.read_settings(Axis.X, Measurement.Range)
+            interface.read_settings(Axis.Y, Measurement.Range)
+            interface.exit()
+            sys.exit()
+
     try:
         interface.connect()
         print("Launch receiver callback")
+
         interface.receive()
 
         t0 = time.time()
-        while (time.time() - t0 < 5) and interface.is_active:
-            interface.actuate()
+        t = 0
+        while (t < 20) and interface.is_active:
+            # interface.actuate(safe=False)
+            interface.actuate_test(t)
             position = interface.get_state()
-            print("Position: ", position)
+            print("{:.2f} | Position: {}".format(t, position))
             time.sleep(0.5)
+            t = time.time() - t0
         print('--> [x] Completed module test')
     except Exception as e:
         print('--> [ ] Encountered exception: \n', e)
