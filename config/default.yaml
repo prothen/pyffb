@@ -1,4 +1,4 @@
 host: "127.0.0.1"
 port: 15090
-timeout: 8
+timeout: 1
 buffer_size: 8192
