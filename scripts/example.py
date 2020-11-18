@@ -57,7 +57,7 @@ if __name__ == "__main__":
             interface.actuate_test(t)
             position = interface.get_state()
             print("{:.2f} | Position: {}".format(t, position))
-            time.sleep(0.5)
+            time.sleep(0.1)
             t = time.time() - t0
         print('--> [x] Completed module test')
     except Exception as e:
