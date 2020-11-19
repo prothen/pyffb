@@ -27,7 +27,7 @@ _Note: This repository can be used irrespective of Windows or UNIX system. The `
 - `>=Python 3.X`
 
 ## References
-- [external control protocol and Python sample code](https://cls2sim.brunner-innovation.swiss/externalcontrol.htm)
+- [External control protocol and Python sample code](https://cls2sim.brunner-innovation.swiss/externalcontrol.htm)
 - [Protocol overview](https://cls2sim.brunner-innovation.swiss/protocolv2.htm)
 - [Python struct formats](https://docs.python.org/2/library/struct.html)
 
