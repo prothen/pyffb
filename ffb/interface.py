@@ -118,7 +118,7 @@ class Interface:
         data_id = measurement2data_id[measurement]
         common_format = "HB"
 
-        message = (Command.DataRead, 0x01, data_id)
+        message = (Command.DataRead, axis2axis_id[axis], data_id)
         print('Send message:')
         self._print_message_fields(message)
         packet = struct.pack('<III', *message)
