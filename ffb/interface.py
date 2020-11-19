@@ -166,6 +166,7 @@ class Interface:
                 shutdown_request=self._thread_shutdown_request)
             thread.start()
             self._receiver_thread_active = True
+            return
         self._receive()
 
     def get_state(self):
