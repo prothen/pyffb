@@ -11,7 +11,7 @@ _Note: If the module has been installed using `setup.py` and you want to overrid
 
 ## Setup
 Install [CLS2SIM](https://www.brunner-innovation.swiss/product/cls2sim-software/) and navigate to its installation directory under `C:\Program Files (x86)\Brunnel Elektronik AG`.
-Install the virtual joystick in the corresponding subdirectory and if necessary consult the pdf in the main directory for more details.
+Install the virtual joystick in the corresponding subdirectory and if necessary consult the pdf in the main directory provided with the CLS2SIM installation for more details.
 
 1. Power the joystick and connect it to the computer according to the instructions
 2. Launch `CLS2Sim` and enable [external control](https://cls2sim.brunner-innovation.swiss/externalcontrol.htm)
@@ -35,6 +35,6 @@ _Note: This repository can be used irrespective of Windows or UNIX system. The `
 If you have feature requests, questions or you want to contribute, you are very welcome to submit a pull request!
 
 ## License
-If you would like to use this code or parts of this code or you are interested in a open source license, let me know under `philipp.rothenhaeusler at gmail.com`.
+If you would like to use this code or parts of this code or you are interested in an open source license, let me know under `philipp.rothenhaeusler at gmail.com`.
 
 (c) Copyright 2020 Philipp Rothenhäusler All rights reserved.
