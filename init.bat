@@ -5,9 +5,6 @@ setlocal enabledelayedexpansion
 set sourced=""
 set cwd="%cd%"
 
-:: set pyunity3d log directory
-setx pyunity3dlogging "!cwd!\logs"
-
 if "%pythonpath%" == "" (
 	echo "Environment not yet initialised."
 	set current_path=""
