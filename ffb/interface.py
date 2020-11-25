@@ -2,6 +2,10 @@
 """
     Interface to Brunner CLS-E force feedback joystick.
 
+    Todo:
+        - add callback to receiver thread to for example forward to another interface
+
+
     Author: Philipp Rothenhäusler, Stockholm 2020
 
 """
@@ -159,18 +163,21 @@ class Interface:
         except socket.timeout as e:
             pass
 
-    def receive(self, threaded=True):
-        if threaded:
-            thread = ShutdownCompliantThread(
-                target=self._receive_threaded,
-                shutdown_request=self._thread_shutdown_request)
-            thread.start()
-            self._receiver_thread_active = True
-            return
+    def launch_receiver_thread(self):
+        thread = ShutdownCompliantThread(
+            target=self._receive_threaded,
+            shutdown_request=self._thread_shutdown_request)
+        thread.start()
+        self._receiver_thread_active = True
+        
+    def receive(self):
         self._receive()
 
     def get_state(self):
         return self.state
+    
+    def get_joystick_position_xy(self):
+        return [self.state[0], self.state[2]]
 
     def actuate(self, x=0, y=0, safe=True):
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
