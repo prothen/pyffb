@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     try:
         interface.connect()
-        interface.receive()
+        interface.launch_receiver_thread()
 
         t0 = time.time()
         t = 0

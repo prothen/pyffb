@@ -48,7 +48,7 @@ if __name__ == "__main__":
         interface.connect()
         print("Launch receiver callback")
 
-        interface.receive()
+        interface.launch_receiver_thread()
 
         t0 = time.time()
         t = 0
