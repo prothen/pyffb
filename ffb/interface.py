@@ -169,15 +169,15 @@ class Interface:
             shutdown_request=self._thread_shutdown_request)
         thread.start()
         self._receiver_thread_active = True
-        
+
     def receive(self):
         self._receive()
 
     def get_state(self):
         return self.state
-    
+
     def get_joystick_position_xy(self):
-        return [self.state[0], self.state[2]]
+        return [-2*(self.state[2]-0.5), 2*(self.state[0]-.5)]
 
     def actuate(self, x=0, y=0, safe=True):
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
@@ -190,8 +190,8 @@ class Interface:
         print("Actuated: {}".format(self.force))
 
     def actuate_test(self, t):
-        fmax = 180
-        frequency = 0.3
+        fmax = 250
+        frequency = .3
         w = 2 * numpy.pi * frequency
         x = numpy.sin(w * t) * fmax
         y = numpy.cos(w * t) * fmax
