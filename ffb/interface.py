@@ -183,8 +183,8 @@ class Interface:
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
             print('Actuation aborted by user request')
             return
-        self.force[0] = x
-        self.force[2] = y
+        self.force[2] = -x
+        self.force[0] = y
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
         print("Actuated: {}".format(self.force))
