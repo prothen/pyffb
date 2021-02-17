@@ -22,7 +22,6 @@ import struct
 import signal
 import threading
 
-
 from ffb.protocol import *
 from ffb.custom_thread import *
 
@@ -70,8 +69,8 @@ class Interface:
             if config_name is not None:
 
                 with open('{}/{}.yaml'.format(
-                    path,
-                    config_name), 'r') as stream:
+                        path,
+                        config_name), 'r') as stream:
                     try:
                         config = yaml.safe_load(stream)
                     except yaml.YAMLError as e:
@@ -105,7 +104,7 @@ class Interface:
             pass
         sys.exit(1)
 
-    def read_settings(self, axis : Axis, measurement : Measurement):
+    def read_settings(self, axis: Axis, measurement: Measurement):
         """
             Note:
                 This requires message_identifiers to be disabled in CLS2Sim
@@ -136,7 +135,7 @@ class Interface:
         print("Received status: {:02X}".format(status[0]))
 
         # Catch error in reading
-        if not (status[0] == 0x00 ):
+        if not (status[0] == 0x00):
             self._parse_error_message(response)
 
         # Successful request status (expect device_id next)
@@ -177,7 +176,7 @@ class Interface:
         return self.state
 
     def get_joystick_position_xy(self):
-        return [-2*(self.state[2]-0.5), 2*(self.state[0]-.5)]
+        return [-2 * (self.state[2] - 0.5), 2 * (self.state[0] - .5)]
 
     def actuate(self, x=0, y=0, safe=True):
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
@@ -189,16 +188,19 @@ class Interface:
         self.socket.sendto(packet, (self.host, self.port))
         print("Actuated: {}".format(self.force))
 
-    def actuate_test(self, t):
-        fmax = 250
-        frequency = .3
+    def actuate_test(self, t, stop=False):
+        if stop:
+            self.actuate(0, 0, safe=False)
+            return
+        fmax = 3000
+        frequency = .1
         w = 2 * numpy.pi * frequency
         x = numpy.sin(w * t) * fmax
         y = numpy.cos(w * t) * fmax
         self.actuate(x, y, safe=False)
 
-
     def exit(self):
+        self.actuate_test(0, stop=True)
         self._thread_shutdown_request.set()
         self._receiver_thread_active = False
 
@@ -215,27 +217,27 @@ if __name__ == "__main__":
 
     # Test setting retrieval
     if False:
-            # Position
-            print('Position')
-            interface.read_settings(Axis.X, Measurement.Position)
-            interface.read_settings(Axis.Y, Measurement.Position)
-            # PositionNormalized
-            print('PositionNormalized')
-            interface.read_settings(Axis.X, Measurement.PositionNormalized)
-            interface.read_settings(Axis.Y, Measurement.PositionNormalized)
-            # AppliedForces
-            print('AppliedForces')
-            interface.read_settings(Axis.X, Measurement.AppliedForce)
-            interface.read_settings(Axis.Y, Measurement.AppliedForce)
-            # AppliedForcesNormalized
-            print('AppliedForcesNormalized')
-            interface.read_settings(Axis.X, Measurement.AppliedForceNormalized)
-            interface.read_settings(Axis.Y, Measurement.AppliedForceNormalized)
-            print('Range')
-            interface.read_settings(Axis.X, Measurement.Range)
-            interface.read_settings(Axis.Y, Measurement.Range)
-            interface.exit()
-            sys.exit()
+        # Position
+        print('Position')
+        interface.read_settings(Axis.X, Measurement.Position)
+        interface.read_settings(Axis.Y, Measurement.Position)
+        # PositionNormalized
+        print('PositionNormalized')
+        interface.read_settings(Axis.X, Measurement.PositionNormalized)
+        interface.read_settings(Axis.Y, Measurement.PositionNormalized)
+        # AppliedForces
+        print('AppliedForces')
+        interface.read_settings(Axis.X, Measurement.AppliedForce)
+        interface.read_settings(Axis.Y, Measurement.AppliedForce)
+        # AppliedForcesNormalized
+        print('AppliedForcesNormalized')
+        interface.read_settings(Axis.X, Measurement.AppliedForceNormalized)
+        interface.read_settings(Axis.Y, Measurement.AppliedForceNormalized)
+        print('Range')
+        interface.read_settings(Axis.X, Measurement.Range)
+        interface.read_settings(Axis.Y, Measurement.Range)
+        interface.exit()
+        sys.exit()
 
     try:
         interface.connect()
