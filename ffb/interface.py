@@ -183,7 +183,7 @@ class Interface:
             print('Actuation aborted by user request')
             return
         self.force[2] = -x
-        self.force[0] = y
+        self.force[0] = -y
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
         print("Actuated: {}".format(self.force))
