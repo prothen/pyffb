@@ -190,8 +190,8 @@ class Interface:
         y = max(-1, min(y, 1))
 
         ## Apply force to appropriate axis
-        self.force[0] = -x * self.force_max
-        self.force[2] = y * self.force_max
+        self.force[2] = x * self.force_max
+        self.force[0] = - y * self.force_max
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
         print("Actuated: {}".format(self.force))
