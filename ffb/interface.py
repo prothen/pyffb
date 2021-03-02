@@ -28,6 +28,10 @@ from ffb.custom_thread import *
 
 @attr.s
 class Interface:
+    # Force max parameter (required)
+    # without mount 900 - 3500
+    force_max = attr.ib(type=typing.Optional[float])
+
     # Variables
     force = attr.ib(default=None, type=typing.Optional[numpy.ndarray])
     state = attr.ib(default=None, type=typing.Optional[numpy.ndarray])
@@ -42,7 +46,6 @@ class Interface:
     buffer_size = attr.ib(default=None, type=typing.Optional[int])
     timeout = attr.ib(default=None, type=typing.Optional[float])
     socket = attr.ib(default=None, type=typing.Optional[socket.socket])
-    force_max = attr.ib(default=None, type=typing.Optional[float])
 
     def __attrs_post_init__(self):
         print('Custom initialisation after parsing')
@@ -182,8 +185,13 @@ class Interface:
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
             print('Actuation aborted by user request')
             return
-        self.force[2] = -x
-        self.force[0] = -y
+        ## Saturate input to range [-1, 1]
+        x = max(-1, min(x, 1))
+        y = max(-1, min(y, 1))
+
+        ## Apply force to appropriate axis
+        self.force[0] = -x * self.force_max
+        self.force[2] = y * self.force_max
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
         print("Actuated: {}".format(self.force))
@@ -192,7 +200,7 @@ class Interface:
         if stop:
             self.actuate(0, 0, safe=False)
             return
-        fmax = 3000
+        fmax = 900
         frequency = .1
         w = 2 * numpy.pi * frequency
         x = numpy.sin(w * t) * fmax
