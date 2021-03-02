@@ -27,8 +27,13 @@ if __name__ == "__main__":
         t0 = time.time()
         t = 0
         while (t < 20) and interface.is_active:
-            # interface.actuate(safe=False)
-            interface.actuate_test(t)
+            ## Send single actuation force vector (-1, 1)
+            # interface.actuate(x=0, y=0, safe=False)
+
+            ## Run time varying actuation test (sine)
+            # interface.actuate_test(t)
+
+            ## Read joystick position
             position = interface.get_state()
             print("{:.2f} | Position: {}".format(t, position))
             time.sleep(0.1)
