@@ -30,7 +30,7 @@ from ffb.custom_thread import *
 class Interface:
     # Force max parameter (required)
     # without mount 900 - 3500
-    force_max = attr.ib(type=typing.Optional[float])
+    force_max = attr.ib(default=None, type=typing.Optional[float])
 
     # Variables
     force = attr.ib(default=None, type=typing.Optional[numpy.ndarray])
@@ -47,6 +47,8 @@ class Interface:
     timeout = attr.ib(default=None, type=typing.Optional[float])
     socket = attr.ib(default=None, type=typing.Optional[socket.socket])
 
+    _debug_is_enabled = attr.ib(default=False, type=bool)
+
     def __attrs_post_init__(self):
         print('Custom initialisation after parsing')
 
@@ -56,7 +58,17 @@ class Interface:
         signal.signal(signal.SIGTERM, self._exit_routine)
 
         self._initialise_from_yaml()
+        if self.force_max is None:
+            print('No force_max specified, set force_max=zero.')
         self._initialise_variables()
+
+        self._debug("Force feedback TCP interface launched on:")
+        self._debug("Host: ", self.host)
+        self._debug("Port: ", self.port)
+
+    def _debug(self, *args):
+        if self._debug_is_enabled:
+            print(*args)
 
     def _exit_routine(self, sig, frame):
         print('Requested shutdown')
@@ -183,7 +195,7 @@ class Interface:
 
     def actuate(self, x=0, y=0, safe=True):
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
-            print('Actuation aborted by user request')
+            self._debug('Actuation aborted by user request')
             return
         ## Saturate input to range [-1, 1]
         x = max(-1, min(x, 1))
@@ -194,7 +206,7 @@ class Interface:
         self.force[0] = - y * self.force_max
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
-        print("Actuated: {}".format(self.force))
+        # print("Actuated: {}".format(self.force))
 
     def actuate_test(self, t, stop=False):
         if stop:
