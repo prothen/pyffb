@@ -110,55 +110,89 @@ class Interface:
         for byte in message:
             print("\t Field: {:02X}".format(byte))
 
-    def _parse_error_message(self, response):
-        # Todo: on demand add error formats
-        print("Received error response")
-        if status == 0x02:
+    def _is_error(self, response):
+        """ Common format based error decoding.
+
+            Note:
+                Expects uint16_t packet length and uint8_t error code.
+
+        """
+        # TODO: Check if equality bit based comparison is valid or & necessary
+        status = response[2]
+        if not status:
+            print('Status is ok: ', status)
+            return False
+        elif status == 0x02:
             pass
         elif status == 0x04:
             pass
-        sys.exit(1)
+        print('Received error code in response: ', status)
+        return True
 
-    def read_settings(self, axis: Axis, measurement: Measurement):
-        """
-            Note:
-                This requires message_identifiers to be disabled in CLS2Sim
+    def update_setting(self, axis: Axis, command_type: CommandType, value):
+        return self.send_command(
+            command=Command().SettingsControl,
+            axis=axis,
+            command_type=command_type,
+            value=value)
 
-            Todo:
-                - move to documentation
-                # COMMAND: Uint32 : 0xD0
-                # Axis Uint32 : 0x01 elevator and 0x02 aileron
-                # data id uint32: 0x10 axis position, 0x60 range
+    def enable_override(self, axis: Axis, command_type):
+        return self.send_command(
+            command=Command().OverrideControl,
+            axis=axis,
+            command_type=command_type)
 
-                - receive format
-                # First 3 bytes are formated with
-        """
-        data_id = measurement2data_id[measurement]
-        common_format = "HB"
+    def read_data(self, axis: Axis, command_type):
+        return self.send_command(
+            command=Command().DataRead,
+            axis=axis,
+            command_type=command_type)
 
-        message = (Command.DataRead, axis2axis_id[axis], data_id)
-        print('Send message:')
-        self._print_message_fields(message)
-        packet = struct.pack('<III', *message)
-        print("Sent {} bytes".format(len(packet)))
+    def send_command(self,
+                     command: CommandDefinition,
+                     command_type: CommandType,
+                     axis: Axis = None,
+                     profile=None,
+                     value=None):
+        """ Return raw response data for specified command type. """
+
+        #self._debug("Send command: ", command, " ({})".format(command_type))
+
+        message = (command.identifier,)
+        request_format = command.request_format
+
+        if command == Command.DataRead or \
+                command == Command.OverrideControl:
+            message += (axis, command_type.identifier)
+        elif command == Command.SettingsControl:
+            request_format += command_type.format
+            message += (axis, command_type.identifier, value)
+
+        ## TODO: Debug printing float message fields
+        # self._print_message_fields(message)
+        packet = struct.pack('<' + request_format, *message)
         self.socket.sendto(packet, (self.host, self.port))
-
-        # RECEIVE
+        # print("Sent {} bytes".format(len(packet)))
+        print('request_format: ', request_format)
+        # Wait for command response
         response, address = self.socket.recvfrom(self.buffer_size)
-        print("Received: {} bytes (from {})".format(len(response), address))
-        status = bytes([response[2]])
-        print("Received status: {:02X}".format(status[0]))
+        # print("Received: {} bytes (from {})".format(len(response), address))
 
-        # Catch error in reading
-        if not (status[0] == 0x00):
-            self._parse_error_message(response)
+        # Test if requested command was successful
+        if self._is_error(response):
+            print('Command processing failed. Are arguments correct?')
+            raise RuntimeError()
 
-        # Successful request status (expect device_id next)
-        common_format += "H"
-        format = common_format + measurement2format[measurement]
-        message = struct.unpack('<' + format, response)
-        print("Decoded message: ", message)
-        print("--> [x] Received settings.")
+        # In case of data read decode the received response and return
+        if command.receives_value:
+            response_format = command.response_format
+            print('Response format: ', response_format)
+            response_format += command_type.format
+            print('Response format: ', response_format)
+            data = struct.unpack('<' + response_format, response)
+            print("Received data: ", data, " of type: ", type(data))
+            print("--> [x] Received settings.")
+            return data
 
     def _receive_threaded(self, shutdown_request):
         while not shutdown_request():
@@ -168,12 +202,12 @@ class Interface:
                 print('Error:\n', e)
 
     def _receive(self):
+        """ Receive actuation response message and parse to position. """
         try:
             response, address = self.socket.recvfrom(self.buffer_size)
             parsed = struct.unpack('<Iffffffff', response)
             if parsed[0] == 0xAE:
                 self.state[:] = parsed[1:]
-                # print('Parsed received bytes to : \n{}\n'.format(self.state))
         except socket.timeout as e:
             pass
 
@@ -201,6 +235,7 @@ class Interface:
         x = max(-1, min(x, 1))
         y = max(-1, min(y, 1))
 
+        print('APPLYING: ', self.force_max)
         ## Apply force to appropriate axis
         self.force[2] = x * self.force_max
         self.force[0] = - y * self.force_max
@@ -227,54 +262,3 @@ class Interface:
     @property
     def is_active(self):
         return self._receiver_thread_active
-
-
-if __name__ == "__main__":
-    print('Start module test')
-    interface = Interface()
-
-    interface.connect()
-
-    # Test setting retrieval
-    if False:
-        # Position
-        print('Position')
-        interface.read_settings(Axis.X, Measurement.Position)
-        interface.read_settings(Axis.Y, Measurement.Position)
-        # PositionNormalized
-        print('PositionNormalized')
-        interface.read_settings(Axis.X, Measurement.PositionNormalized)
-        interface.read_settings(Axis.Y, Measurement.PositionNormalized)
-        # AppliedForces
-        print('AppliedForces')
-        interface.read_settings(Axis.X, Measurement.AppliedForce)
-        interface.read_settings(Axis.Y, Measurement.AppliedForce)
-        # AppliedForcesNormalized
-        print('AppliedForcesNormalized')
-        interface.read_settings(Axis.X, Measurement.AppliedForceNormalized)
-        interface.read_settings(Axis.Y, Measurement.AppliedForceNormalized)
-        print('Range')
-        interface.read_settings(Axis.X, Measurement.Range)
-        interface.read_settings(Axis.Y, Measurement.Range)
-        interface.exit()
-        sys.exit()
-
-    try:
-        interface.connect()
-        print("Launch receiver callback")
-
-        interface.receive()
-
-        t0 = time.time()
-        t = 0
-        while (t < 20) and interface.is_active:
-            # interface.actuate(safe=False)
-            interface.actuate_test(t)
-            position = interface.get_state()
-            print("{:.2f} | Position: {}".format(t, position))
-            time.sleep(0.5)
-            t = time.time() - t0
-        print('--> [x] Completed module test')
-    except Exception as e:
-        print('--> [ ] Encountered exception: \n', e)
-    interface.exit()
