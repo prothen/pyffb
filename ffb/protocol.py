@@ -150,7 +150,11 @@ class DataRead:
     PositionNormalized = CommandType(format="f", identifier=0x11)
     AppliedForce = CommandType(format="i", identifier=0x20)
     AppliedForceNormalized = CommandType(format="f", identifier=0x21)
-    # DigitalInputs = CommandEntry(format="h", identifier=0x10)
+    # LEGACY
+    DigitalInputs = CommandType(format="i", identifier=0x30)
+    # TODO: Digital input sequence is variable for extended command
+    #       handle with if condition in command.receives_value
+    DigitalInputsExtended = CommandType(format="H", identifier=0x31)
     # AnalogInputs = CommandEntry(format="h", identifier=0x10)
     # VirtualForce = CommandEntry(format="h", identifier=0x10)
     Range = CommandType(format="iiii", identifier=0x60)
@@ -185,7 +189,7 @@ class SettingsControl:
 
     AutopilotForce = CommandType(
         format="H", identifier=0x50,
-        value_range=ValueConstraints(min=5, max=1000))
+        value_range=ValueConstraints(min=5, max=99999))
     AutopilotSpeed = CommandType(
         format="H", identifier=0x60,
         value_range=ValueConstraints(min=5, max=10))
