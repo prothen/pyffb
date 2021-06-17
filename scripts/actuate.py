@@ -15,7 +15,7 @@ import ffb.interface
 if __name__ == "__main__":
     print('Start module test for external force actuation.')
 
-    interface = ffb.interface.Interface()
+    interface = ffb.interface.Interface(debug_is_enabled=True)
     interface.connect()
 
     try:
@@ -42,5 +42,6 @@ if __name__ == "__main__":
         print('--> [x] Completed module test')
     except Exception as e:
         print('--> [ ] Encountered exception: \n', e)
+
     interface.exit()
 

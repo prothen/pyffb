@@ -51,10 +51,10 @@ class Interface:
     # Autopilot active
     autopilot_active = attr.ib(default=True, type=bool)
     # Force applied by autopilot to reach position setpoint
-    # Valid range: 1- 65535
+    # Valid range: 1 - 65535
     autopilot_force = attr.ib(default=None, type=typing.Optional[float])
     # Autopilot speed to reach position setpoint
-    # Valid range: 1- 65535
+    # Valid range: 5 - 9999
     autopilot_speed = attr.ib(default=None, type=typing.Optional[float])
 
     # Measurement mapping using exponential based mapping
@@ -63,15 +63,31 @@ class Interface:
     exponential_threshold = attr.ib(default=None,
                                     type=typing.Optional[float])
 
-    # Minimum actuation frequency (>10Hz)
-    frequency_minimum_actuation = attr.ib(default=10, type=float)
     # Actuation idle factor to apply transition force mapping
     _force_idle_factor: float = 0
 
-    # Actuation time stamp to automatically disengage
-    _timeperiod_next_action = attr.ib(default=None, type=typing.Optional[float])
-    _deadline_next_actuation = attr.ib(default=None, type=typing.Optional[float])
+    # Flag to indicate idle detection state transitioning
     _actuation_idle_detected = attr.ib(default=False, type=bool)
+
+    # Desired actuation frequency (>10Hz)
+    frequency_desired_actuation = attr.ib(default=None,
+            type=typing.Optional[float])
+
+    # Minimum actuation frequency (>10Hz)
+    frequency_minimum_actuation = attr.ib(default=None,
+            type=typing.Optional[float])
+
+    # Time period according to desired actuation frequency
+    _timeperiod_next_actuation = attr.ib(
+            default=None, type=typing.Optional[float])
+
+    # Time period according to minimal actuation frequency
+    _time_period_next_actuation_maximum = attr.ib(
+            default=None, type=typing.Optional[float])
+
+    # Time stamp for frequency determination of measurement reception
+    _stamp_axes_state = attr.ib(default=None, type=typing.Optional[float])
+    _stamp_last_actuation = attr.ib(default=None, type=typing.Optional[float])
 
     _debug_is_enabled = attr.ib(default=False, type=bool)
 
@@ -92,15 +108,25 @@ class Interface:
         # Initialise variables
         self.force = numpy.zeros(8, dtype=numpy.int32)
         self.state = numpy.zeros(8, dtype=numpy.float32)
-        self._timeperiod_next_action = 1. / self.frequency_minimum_actuation
-        self._deadline_next_actuation = time.time() + self._timeperiod_next_action
+
+        # Initialise timing conditions
+        self._time_period_next_actuation = \
+                self.frequency_desired_actuation**-1
+
+        self._time_period_next_actuation_maximum = \
+                self.frequency_minimum_actuation**-1
+
+        # Initialise time stamp axes state measurement reception
+        self._stamp_axes_state = time.time()
+        # Initialise time stamp for last actuation
+        self._stamp_last_actuation = time.time()
 
         self._debug("Force feedback TCP interface launched on:")
         self._debug("Host: {} and Port: {} ".format(self.host, self.port))
 
     def _debug(self, *args):
         if self._debug_is_enabled:
-            self._debug('Pyffb: ', *args)
+            print('Pyffb: ', *args)
 
     def _exit_routine(self, sig, frame):
         """ Gracefully disconnect """
@@ -126,11 +152,11 @@ class Interface:
                 # Argument compliant selection of default config parameters
                 config_current = self.__dict__
                 for key, value in config.items():
-                    if key not in config_current:
+                    if key not in config_current or config_current[key] is None:
                         config_current.update({key: value})
         except Exception as e:
             self._debug('Pyunity3d: Configuration loading failed due to:\n', e)
-            raise RuntimeError()
+            raise ffb.errors.ConfigurationParametersNotLoadedError()
         self._debug('--> [x] Configuration parsed successfully.')
         self._debug('--> Loaded:\n {}'.format(config_name))
 
@@ -157,16 +183,22 @@ class Interface:
         self._debug('Received error code in response: ', status)
         return True
 
+    def _is_actuation_idle(self):
+        """ Return true if last actuation is older than maximally admitted. """
+        deadline = self._stamp_last_actuation + \
+                self._time_period_next_actuation_maximum
+        return deadline < time.time()
+
     def _is_actuation_stream_active(self):
-        """ Returns true if actuation idle is detected.
+        """ Returns true if actuation is active.
 
             Note:
                 Once detection happens variables
-                for transition are initialised.
+                for transitioning are initialised.
 
         """
 
-        if self._deadline_next_actuation < time.time():
+        if self._is_actuation_idle():
             if not self._actuation_idle_detected:
                 # Disengage routine and communication
                 print('Autopilot actuation idle detected!')
@@ -175,38 +207,44 @@ class Interface:
                 self._force_idle_factor = 0
                 self.set_autopilot_force(axis=Axis.X, force=0)
                 self.set_autopilot_force(axis=Axis.Y, force=0)
-            return True
+                self.actuate(x=0, y=0, now=True)
+            return False
         elif self._actuation_idle_detected:
             # Re-engage routine and communication
             print('Autopilot actuation stream regained!')
             print('--> Re-enable force actuation. ')
-            self._actuation_idle_detected = False
-            self._force_idle_factor = 1
             self.set_autopilot_force(axis=Axis.X, force=self.autopilot_force)
             self.set_autopilot_force(axis=Axis.Y, force=self.autopilot_force)
-        return False
+        self._actuation_idle_detected = False
+        self._force_idle_factor = 1
+        return True
 
     def _receive_threaded(self, shutdown_request):
+        """ Runs non-blocking loop for reception and idle detection. """
         while not shutdown_request():
             try:
-                stamp = time.time()
                 self._receive()
-                # TODO: Remove printouts for frequency
-                print('Reception frequency: ',
-                      1./(time.time() - stamp))
-                # Test if actuation
                 self._is_actuation_stream_active()
             except socket.timeout as e:
                 self._debug('Error:\n', e)
 
+    def _measure_reception_frequency(self):
+        """ Update frequency based on first order system. """
+        print('Reception frequency: ',
+              1./(time.time() - self._stamp_axes_state))
+
+        self._stamp_axes_state = time.time()
+
     def _receive(self):
         """ Receive actuation response message and parse to position. """
         try:
+            ## TODO: Nonblocking recvfrom!
             response, address = self.socket.recvfrom(self.buffer_size)
-            parsed = struct.unpack('<Iffffffff', response)
-            if parsed[0] == 0xAE:
+            if response[0] == 0xAE:
+                parsed = struct.unpack('<Iffffffff', response)
                 self.state[:] = parsed[1:]
-        except socket.timeout as e:
+                self._measure_reception_frequency()
+        except (socket.timeout, Exception) as e:
             pass
 
     def _exponential_mapping(self, value):
@@ -263,7 +301,6 @@ class Interface:
         # Prepare message
         packet = struct.pack('<' + request_format, *message)
         self.socket.sendto(packet, (self.host, self.port))
-        self._deadline_next_actuation = time.time() + self._timeperiod_next_action
         self._debug('request_format: ', request_format)
 
         # Wait for command response
@@ -330,6 +367,7 @@ class Interface:
         """ Connect to CLS2SIM interface. """
         self._debug('Connecting...')
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.settimeout(self.timeout)
         self.socket = sock
         self._debug('--> [x] Connected')
@@ -344,12 +382,12 @@ class Interface:
 
     def exit(self):
         """ Process exit request to end interface gracefully. """
-        self.actuate(x=0, y=0)
+        self.actuate(x=0, y=0, now=True)
         self._thread_shutdown_request.set()
         self._receiver_thread_active = False
 
     def receive(self):
-        """ Return a single position measurement. """
+        """ Return a single axes state measurement. """
         return self._receive()
 
     def set_autopilot_force(self, axis: Axis, force: float):
@@ -360,7 +398,7 @@ class Interface:
             value=numpy.array(force))
 
     def get_axes_xy(self):
-        """ Return 2 dimensional vector for xy axis position measurement. """
+        """ Return 2 dimensional vector for xy axis measurement. """
         return numpy.array([
             -2 * (self.state[2] - 0.5),
             2 * (self.state[0] - .5)])
@@ -372,6 +410,8 @@ class Interface:
 
     def set_position(self, x=0, y=0):
         """ Set setpoint for autopilot to xy position. """
+        if not self._is_time_to_actuate():
+            return
 
         # Saturate input to range [-1, 1]
         x = max(-1, min(x, 1))
@@ -387,14 +427,24 @@ class Interface:
             command_type=SettingsControl.AutopilotPosition,
             value=numpy.array(y))
 
-    def actuate(self, x=0, y=0):
+    def _is_time_to_actuate(self):
+        """ Return true if deadline for next actuation is reached. """
+
+        if self._stamp_last_actuation + self._time_period_next_actuation < time.time():
+            dt =  time.time() - self._stamp_last_actuation
+            print('Received actuation stream with frequency: ', dt**-1)
+            self._stamp_last_actuation = time.time()
+            return True
+        return False
+
+    def actuate(self, x=0, y=0, now=False):
         """ Actuate external force command to joystick. """
+        if not now and not self._is_time_to_actuate():
+            return
 
         # Saturate input to range [-1, 1]
         x = max(-1, min(x, 1))
         y = max(-1, min(y, 1))
-
-        self._debug('External force applied: ', self.external_force_max.flatten())
 
         # Apply force to appropriate axis
         self.force[2] = x * self.external_force_max * self._force_idle_factor
@@ -412,7 +462,7 @@ class Interface:
     def actuate_test(self, t, stop=False):
         """ Time varying force actuation reference script. """
         if stop:
-            self.actuate(x=0, y=0)
+            self.actuate(x=0, y=0, now=True)
             return
         fmax = 900
         frequency = .1

@@ -1,0 +1,12 @@
+host: "10.0.1.201"
+port: 15012
+timeout: 1
+buffer_size: 8192
+external_force_max: 1500
+exponential_scale:  5.1
+exponential_threshold: .5
+autopilot_speed: 10
+autopilot_force: 1500
+frequency_desired_actuation: 100
+frequency_minimum_actuation: 1
+
