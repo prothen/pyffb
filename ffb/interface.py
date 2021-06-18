@@ -14,6 +14,7 @@ import yaml
 import socket
 import struct
 import signal
+import random
 import threading
 
 import ffb
@@ -94,10 +95,19 @@ class Interface:
 
     has_new_message = attr.ib(default=False, type=bool)
 
+    statistics = attr.ib(default=None, type=typing.Optional[dict])
+
     def __attrs_post_init__(self):
         self._debug('Custom initialisation after parsing')
 
         self._thread_shutdown_request = threading.Event()
+
+        # Initialise statistics
+        s = dict()
+        s['sent_commands'] = 0
+        s['received_commands'] = 0
+        s['external_actuation_messages'] = 0
+        self.statistics = s
 
         # Implement signal handling in wrapping class to call exit() to cleanup
         # Todo: Required under Windows (for disengagement exit_routine)
@@ -309,6 +319,9 @@ class Interface:
                      value=None):
         """ Return raw response data for specified command type. """
 
+
+        s = self.statistics
+
         # self._debug("Send command: ", command.identifier)
 
         message = (command.identifier,)
@@ -321,25 +334,57 @@ class Interface:
             request_format += command_type.format
             message += (axis, command_type.identifier, value)
 
+        # If external_message_identifier is enabled add id at front
+        # TODO: Find randomised message id
+        # TODO: Check that id is non-zero
+        message_id = random.randint(1, 4294967296)
+
+        request_format = "I" + request_format        
+        message = (message_id,) + message
+
         # Prepare message
         packet = struct.pack('<' + request_format, *message)
         self.socket.sendto(packet, (self.host, self.port))
+        s['sent_commands'] += 1
 
-        # Wait for command response
-        # TODO: In order to guarantee successful decoding mixups need
-        #       to be avoided by introducing message identifier fields
-        #       -> See provided CLS2SIM GUI configuration
-        #       For now ignore failed decoding and return None to handle
-        #       erroneous readings externally
         try:
-            response, address = self.socket.recvfrom(self.buffer_size)
-            # print('Response: ', response)
+            response_format = "HIB"
+            # Expect response within 5ms
+            time_to_wait = .01
+            expiration_deadline = time.time() + time_to_wait
+
+            # Message Id expected as 
+            message_id_received = 0x00
+
+            while expiration_deadline > time.time() and \
+                not message_id == message_id_received:
+                try:
+                    response, address = self.socket.recvfrom(self.buffer_size)
+                    # Slice first 7 bytes
+                    data = struct.unpack('<' + response_format, response[:7])
+                    length = data[0]
+                    message_id_received = data[1]
+                    error_code = data[2]
+                    # messaged_id_received = data[1] # struct.unpack('<' + response_format, response)
+                    # message_id_received = response[1]
+                except (socket.timeout, Exception) as e:
+                    pass 
+
+            # Either expiration for waiting reached or message id is correct
+            if not message_id == message_id_received:
+                return None
+            # Otherwise delete message identifier and continue as usual
+            response = response[:2] + response[6:]
+
 
             # Test if requested command was successful
             if self._is_error(response):
                 # TODO: Alternatively return False for external error handling
                 self._debug('Command processing failed. Are arguments correct?')
                 raise RuntimeError()
+
+            # Any non-erronous message is seen as successful reception
+            s['received_commands'] += 1
 
             # In case of data read decode the received response and return
             if command.receives_value:
@@ -349,6 +394,7 @@ class Interface:
                 # self._debug("Received data: ", data, " of type: ", type(data))
                 return data
         except Exception as e:
+            print('Error due to : ', e)
             return None
 
     def _activate_autopilot_on_axis(self, axis: Axis):
@@ -365,12 +411,6 @@ class Interface:
             axis=axis,
             command_type=SettingsControl.AutopilotForce,
             value=self.autopilot_force)
-
-        self._debug(axis, ': Set autopilot initial position...')
-        self.update_setting(
-            axis=axis,
-            command_type=SettingsControl.AutopilotPosition,
-            value=numpy.array(0))
 
         self._switch_autopilot_mode(axis, enable=True)
 
@@ -398,13 +438,22 @@ class Interface:
 
     def deactivate_autopilot(self):
         """ Deactivate autopilot on both axes. """
+
+        self._debug('Disable autopilot overrides...')
+        self.enable_override(
+            axis=0x00,
+            command_type=OverrideControl.AutopilotEnableOverride)
+        self.enable_override(
+            axis=0x00,
+            command_type=OverrideControl.AutopilotPositionOverride)
+
         self._switch_autopilot_mode(Axis.X, enable=False)
         self._switch_autopilot_mode(Axis.Y, enable=False)
 
     def activate_autopilot(self):
         """ Activate autopilot for x and y axis based interaction. """
-        self._switch_autopilot_mode(Axis.X, enable=True)
-        self._switch_autopilot_mode(Axis.Y, enable=True)
+        # Re-enable overrides and initial configuration and setpoints
+        self.initialise_autopilot()
 
     def enable_autopilot(self, enable: bool):
         self._autopilot_activated = enable
@@ -419,8 +468,8 @@ class Interface:
         self._debug('Connecting...')
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        # sock.settimeout(.001)
-        # sock.setblocking(0)
+        sock.settimeout(.01)
+        #sock.setblocking(0)
         self.socket = sock
         self._debug('--> [x] Connected')
 
@@ -450,6 +499,13 @@ class Interface:
             axis=axis,
             command_type=SettingsControl.AutopilotForce,
             value=numpy.array(force))
+    
+    def reset_statistics(self):
+        """ Reset the interface statistics. """
+        s = self.statistics
+        s['sent_commands'] = 0
+        s['received_commands'] = 0
+        s['external_actuation_messages'] = 0
 
     def get_axes_xy(self, mark_fetched=True):
         """ Return 2 dimensional vector for xy axis measurement. """
@@ -486,17 +542,16 @@ class Interface:
         x = self.read_data(
             axis=axis,
             command_type=DataRead.PositionNormalized)
-        if x is not None:
-            return x[-1]
-        return None
+
+        return x[-1] if x is not None else None
 
     def get_position(self):
-        """ Get joystick position as 2 dimensional vector. """
+        """ Return joystick position in 2 dimensional vector in ENU frame. """
         x = self._get_position(Axis.X)
         y = self._get_position(Axis.Y)
 
         if x is not None and y is not None:
-            return (x, y)
+            return numpy.array([x, y])
         return None
 
     def _is_time_to_actuate(self):
@@ -508,8 +563,15 @@ class Interface:
             return True
         return False
 
-    def actuate(self, x=0, y=0, now=False):
-        """ Actuate external force command to joystick. """
+    def actuate(self, x, y, now=False):
+        """ Actuate external force command to joystick. 
+        
+            Note: 
+                Expects (x,y) applied in ENU coordinate frame
+                according to REP105 and converts it internally to
+                corresponding aileron and elevator.
+
+        """
         if not now and not self._is_time_to_actuate():
             return
 
@@ -518,13 +580,15 @@ class Interface:
         y = max(-1, min(y, 1))
 
         # Apply force to appropriate axis
-        # 0: Elevator (Pilot)
-        # 2: Aileron (Pilot)
-        self.force[2] = x * self.external_force_max * self._force_idle_factor
-        self.force[0] = - y * self.external_force_max * self._force_idle_factor
+        # x: - elevator
+        # y: - aileron
 
-        packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
+        self.force[0] = - x * self.external_force_max * self._force_idle_factor
+        self.force[2] = - y * self.external_force_max * self._force_idle_factor
+
+        packet = struct.pack('<IIiiiiiiii', 0, 0xAE, *(self.force.tolist()))
         self.socket.sendto(packet, (self.host, self.port))
+        self.statistics['external_actuation_messages'] += 1
 
     def actuate_safe(self, safe=True, *args, **kwargs):
         """ Safe actuation for test setups to confirm single actuation. """

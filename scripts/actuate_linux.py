@@ -19,11 +19,11 @@ if __name__ == "__main__":
     interface.connect()
 
     try:
-        interface.launch_receiver_thread()
+        # interface.launch_receiver_thread()
 
         t0 = time.time()
         t = 0
-        while (t < 10) and interface.is_active:
+        while (t < 10) and interface.actuation_stream_is_active():
 
             # Test automatic idle disengagement after 5 seconds
             if t>5:

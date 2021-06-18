@@ -117,7 +117,10 @@ class Command:
 
 
 class Axis(enum.IntEnum):
+    """ Selecting X as elevator and y as aileron yields REP103 body frame. """
+    # Elevator (forward positive)
     X = 0x01
+    # Aileron (left positive)
     Y = 0x02
 
 
