@@ -15,7 +15,7 @@ import ffb.interface
 
 
 TEST_SPEED = 15
-TIME_TO_WAIT_IN_SECONDS = 10
+TIME_TO_WAIT_IN_SECONDS = 5
 
 
 def move_to_position(

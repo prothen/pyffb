@@ -7,6 +7,7 @@
 """
 
 import os
+import sys
 import attr
 import time
 import yaml
@@ -15,7 +16,6 @@ import struct
 import signal
 import threading
 
-
 import ffb
 
 from ffb.protocol import *
@@ -23,7 +23,6 @@ from ffb.protocol import *
 
 @attr.s
 class Interface:
-
     # Flag indicating whether thread is alive
     _receiver_thread_active = attr.ib(default=False, type=bool)
 
@@ -51,7 +50,7 @@ class Interface:
     external_force_max = attr.ib(default=None, type=typing.Optional[float])
 
     # Autopilot active
-    autopilot_active = attr.ib(default=True, type=bool)
+    _autopilot_activated = attr.ib(default=True, type=bool)
     # Force applied by autopilot to reach position setpoint
     # Valid range: 1 - 65535
     autopilot_force = attr.ib(default=None, type=typing.Optional[float])
@@ -73,19 +72,19 @@ class Interface:
 
     # Desired actuation frequency (>10Hz)
     frequency_desired_actuation = attr.ib(default=None,
-            type=typing.Optional[float])
+                                          type=typing.Optional[float])
 
     # Minimum actuation frequency (>10Hz)
     frequency_minimum_actuation = attr.ib(default=None,
-            type=typing.Optional[float])
+                                          type=typing.Optional[float])
 
     # Time period according to desired actuation frequency
     _timeperiod_next_actuation = attr.ib(
-            default=None, type=typing.Optional[float])
+        default=None, type=typing.Optional[float])
 
     # Time period according to minimal actuation frequency
     _time_period_next_actuation_maximum = attr.ib(
-            default=None, type=typing.Optional[float])
+        default=None, type=typing.Optional[float])
 
     # Time stamp for frequency determination of measurement reception
     _stamp_axes_state = attr.ib(default=None, type=typing.Optional[float])
@@ -101,6 +100,7 @@ class Interface:
         self._thread_shutdown_request = threading.Event()
 
         # Implement signal handling in wrapping class to call exit() to cleanup
+        # Todo: Required under Windows (for disengagement exit_routine)
         # signal.signal(signal.SIGINT, self._exit_routine)
         # signal.signal(signal.SIGTERM, self._exit_routine)
 
@@ -116,10 +116,10 @@ class Interface:
 
         # Initialise timing conditions
         self._time_period_next_actuation = \
-                self.frequency_desired_actuation**-1
+            self.frequency_desired_actuation ** -1
 
         self._time_period_next_actuation_maximum = \
-                self.frequency_minimum_actuation**-1
+            self.frequency_minimum_actuation ** -1
 
         # Initialise time stamp axes state measurement reception
         self._stamp_axes_state = time.time()
@@ -147,7 +147,7 @@ class Interface:
         # Use as default the files absolute working directory
         cwd = os.path.dirname(os.path.abspath(__file__))
         if self.config_path is None:
-            path = "{}/../config".format(cwd) 
+            path = "{}/../config".format(cwd)
         else:
             path = self.config_path
 
@@ -169,7 +169,7 @@ class Interface:
         except Exception as e:
             self._debug('Pyunity3d: Configuration loading failed due to:\n', e)
             raise ffb.errors.ConfigurationParametersNotLoadedError()
-        
+
         # Overwrite configuration with any provided dictionary config
         print('self._config: ', self._config)
         if self._config is not None:
@@ -181,7 +181,7 @@ class Interface:
     def _measure_reception_frequency(self):
         """ Update frequency based on first order system. """
         print('Reception frequency: ',
-              1./(time.time() - self._stamp_axes_state))
+              1. / (time.time() - self._stamp_axes_state))
 
         self._stamp_axes_state = time.time()
 
@@ -196,7 +196,6 @@ class Interface:
         return numpy.apply_along_axis(self._exponential_mapping,
                                       vector,
                                       axis=0)
-
 
     def _debug_message_fields(self, message):
         for byte in message:
@@ -223,10 +222,10 @@ class Interface:
     def _is_actuation_idle(self):
         """ Return true if last actuation is older than maximally admitted. """
         deadline = self._stamp_last_actuation + \
-                self._time_period_next_actuation_maximum
+                   self._time_period_next_actuation_maximum
         return deadline < time.time()
 
-    def is_actuation_stream_active(self):
+    def actuation_stream_is_active(self):
         """ Returns true if actuation is active.
 
             Note:
@@ -271,19 +270,17 @@ class Interface:
         except (socket.timeout, Exception) as e:
             pass
 
-
     def _receive_threaded(self, shutdown_request):
         """ Runs non-blocking loop for reception and idle detection. """
         try:
             while not shutdown_request():
                 try:
                     self._receive()
-                    self.is_actuation_stream_active()
+                    self.actuation_stream_is_active()
                 except socket.timeout as e:
                     self._debug('Error:\n', e)
         except Exception as e:
             sys.exit(0)
-            
 
     def update_setting(self, axis: Axis, command_type: CommandType, value):
         return self.send_command(
@@ -334,7 +331,7 @@ class Interface:
         #       -> See provided CLS2SIM GUI configuration
         #       For now ignore failed decoding and return None to handle
         #       erroneous readings externally
-        try: 
+        try:
             response, address = self.socket.recvfrom(self.buffer_size)
             # print('Response: ', response)
 
@@ -354,7 +351,7 @@ class Interface:
         except Exception as e:
             return None
 
-    def _activate_autopilot_on_axis(self, axis : Axis):
+    def _activate_autopilot_on_axis(self, axis: Axis):
         """ Enable autopilot and corresponding overrides on axis. """
 
         self._debug(axis, ': Set autopilot speed...')
@@ -375,7 +372,7 @@ class Interface:
             command_type=SettingsControl.AutopilotPosition,
             value=numpy.array(0))
 
-        self._switch_autopilot_mode(axis, 1)
+        self._switch_autopilot_mode(axis, enable=True)
 
         self._debug(axis, ': Enable autopilot overwrite...')
         self.enable_override(
@@ -408,10 +405,10 @@ class Interface:
         """ Activate autopilot for x and y axis based interaction. """
         self._switch_autopilot_mode(Axis.X, enable=True)
         self._switch_autopilot_mode(Axis.Y, enable=True)
-    
-    def enable_autopilot(self, enable: bool): 
-        self._autopilot_activated = enable 
-        if enable:    
+
+    def enable_autopilot(self, enable: bool):
+        self._autopilot_activated = enable
+        if enable:
             self.activate_autopilot()
             return
         # Disable autopilot engagement
@@ -437,7 +434,9 @@ class Interface:
 
     def exit(self):
         """ Process exit request to end interface gracefully. """
+        self._debug("Execute exit routine to cleanup interface...")
         self.actuate(x=0, y=0, now=True)
+        self.deactivate_autopilot()
         self._thread_shutdown_request.set()
         self._receiver_thread_active = False
 
@@ -472,7 +471,7 @@ class Interface:
         # Saturate input to range [-1, 1]
         x = max(-1, min(x, 1))
         y = max(-1, min(y, 1))
-        
+
         self.update_setting(
             axis=Axis.X,
             command_type=SettingsControl.AutopilotPosition,
@@ -482,17 +481,17 @@ class Interface:
             axis=Axis.Y,
             command_type=SettingsControl.AutopilotPosition,
             value=numpy.array(y))
-    
+
     def _get_position(self, axis: Axis):
         x = self.read_data(
-                axis=axis,
-                command_type=DataRead.PositionNormalized)
-        if x is not None: 
+            axis=axis,
+            command_type=DataRead.PositionNormalized)
+        if x is not None:
             return x[-1]
         return None
 
     def get_position(self):
-        """ Get joystick position as 2 dimensional vector. """ 
+        """ Get joystick position as 2 dimensional vector. """
         x = self._get_position(Axis.X)
         y = self._get_position(Axis.Y)
 
@@ -504,7 +503,7 @@ class Interface:
         """ Return true if deadline for next actuation is reached. """
 
         if self._stamp_last_actuation + self._time_period_next_actuation < time.time():
-            dt =  time.time() - self._stamp_last_actuation
+            dt = time.time() - self._stamp_last_actuation
             self._stamp_last_actuation = time.time()
             return True
         return False
@@ -523,9 +522,10 @@ class Interface:
         # 2: Aileron (Pilot)
         self.force[2] = x * self.external_force_max * self._force_idle_factor
         self.force[0] = - y * self.external_force_max * self._force_idle_factor
+
         packet = struct.pack('<Iiiiiiiii', 0xAE, *self.force.tolist())
         self.socket.sendto(packet, (self.host, self.port))
-        
+
     def actuate_safe(self, safe=True, *args, **kwargs):
         """ Safe actuation for test setups to confirm single actuation. """
         if safe and not input("Confirm with by pressing 'yes'") == "yes":
@@ -538,15 +538,14 @@ class Interface:
         if stop:
             self.actuate(x=0, y=0, now=True)
             return
-        fmax = 900
+
         frequency = .1
         w = 2 * numpy.pi * frequency
-        x = numpy.sin(w * t) * fmax
-        y = numpy.cos(w * t) * fmax
+        x = numpy.sin(w * t)
+        y = numpy.cos(w * t)
 
         self.actuate(x=x, y=y)
 
     @property
     def is_active(self):
         return self._receiver_thread_active
-

@@ -19,25 +19,27 @@ if __name__ == "__main__":
     interface.connect()
 
     try:
-        interface.launch_receiver_thread()
 
         t0 = time.time()
         t = 0
-        while (t < 20) and interface.is_active:
+        while (t < 20) and interface.actuation_stream_is_active():
             # Send single actuation force vector (-1, 1)
             # interface.actuate_safe(x=-1, y=1, safe=False)
 
+            if t > 5:
+                continue
             # Send time-varying actuation test (sine)
-            interface.actuate_test(t)
+            if interface.actuate_test(t):
 
-            # Read joystick states
-            all_states = interface.state
-            position_xy = interface.get_axes_xy()
+                # Read joystick states
+                all_states = interface.state
+                position_xy = interface.get_axes_xy()
 
-            print("{:.2f} | All axis states: {}".format(t, all_states))
-            print("{:.2f} | Position (xy): {}".format(t, position_xy))
+                print("{:.2f} | All axis states: {}".format(t, all_states))
+                print("{:.2f} | Position (xy): {}".format(t, position_xy))
 
-            time.sleep(0.1)
+                # Use 1kHz as upper bound to sleep
+                #time.sleep(0.001)
             t = time.time() - t0
         print('--> [x] Completed module test')
     except Exception as e:

@@ -7,5 +7,6 @@ exponential_scale:  5.1
 exponential_threshold: .5
 autopilot_speed: 10
 autopilot_force: 1500
-frequency_minimum_actuation: 10
+frequency_desired_actuation: 100
+frequency_minimum_actuation: 1
 
