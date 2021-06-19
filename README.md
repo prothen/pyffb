@@ -3,10 +3,14 @@ This is a Python package to provide an interface to the force feedback joystick 
 
 For ROS enabled applications you may also find the [`joystick`](https://github.com/prothen/joystick) implementation useful.
 
+
+_Note: For an overview of the available interface methods consult the [API documentation here](https://prothen.github.io/pyffb)._
+
+
 ## Usage
 To change initial parameters or configurations, change the parameter file `config/default.yaml`.
-By specifying the `config_name` argument on initialisation you can redirect to your own configuration such as `config/new_config.yaml` and create the interface with `ffb.Interface(config_name="new_config.yaml")`. 
-Alternatively, directly pass a dictionary with appropriate key-value pairs under the `config` argument. 
+By specifying the `config_name` argument on initialisation you can redirect to your own configuration such as `config/new_config.yaml` and create the interface with `ffb.Interface(config_name="new_config.yaml")`.
+Alternatively, directly pass a dictionary with appropriate key-value pairs under the `config` argument.
 
 _Note: If the module has been installed using `setup.py` and you want to override the relative configuration, you need to specify the absolute path to the configuration using the argument `configuration_path` on initialisation._
 
