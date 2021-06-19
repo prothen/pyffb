@@ -1,27 +1,25 @@
 #!/usr/bin/env python
-"""
-    Command, axis and message definitions.
+""" Module containing command, axis and message protocol definitions. """
 
-    For reference of the format string used for struct creation see
-
-    https://docs.python.org/3/library/struct.html
-
-    Basics:
-        float 'f'
-        signed / unsigned byte 'b' / 'B'
-        signed / unsigned int16 'h' / 'H'
-        signed / unsigned int32 'i' / 'I'
-
-
-    Author: Philipp Rothenhäusler, Stockholm 2020
-
-"""
+__author__ = "Philipp Rothenhäusler"
+__version__ = "1.0"
+__status__ = "Development"
+__copyright__ = "Copyright 2021 Philipp Rothenhäusler"
+__email__ = "philipp.rothenhaeusler@gmail.com"
 
 
 import enum
 import attr
 import numpy
 import typing
+
+# For reference of the format string used for struct creation see
+# -> https://docs.python.org/3/library/struct.html
+#     Basics:V
+#        float 'f'
+#        signed / unsigned byte 'b' / 'B'
+#        signed / unsigned int16 'h' / 'H'
+#        signed / unsigned int32 'i' / 'I'
 
 
 # Response elements

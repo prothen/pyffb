@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-"""
-    Interface to Brunner CLS-E force feedback joystick.
+""" Interface to Brunner CLS-E force feedback joystick. """
 
-    Author: Philipp Rothenhäusler, Stockholm 2020
+__author__ = "Philipp Rothenhäusler"
+__version__ = "1.0"
+__status__ = "Development"
+__copyright__ = "Copyright 2021 Philipp Rothenhäusler"
+__email__ = "philipp.rothenhaeusler@gmail.com"
 
-"""
 
 import os
 import sys
@@ -339,7 +341,7 @@ class Interface:
         # TODO: Check that id is non-zero
         message_id = random.randint(1, 4294967296)
 
-        request_format = "I" + request_format        
+        request_format = "I" + request_format
         message = (message_id,) + message
 
         # Prepare message
@@ -353,7 +355,7 @@ class Interface:
             time_to_wait = .01
             expiration_deadline = time.time() + time_to_wait
 
-            # Message Id expected as 
+            # Message Id expected as
             message_id_received = 0x00
 
             while expiration_deadline > time.time() and \
@@ -368,7 +370,7 @@ class Interface:
                     # messaged_id_received = data[1] # struct.unpack('<' + response_format, response)
                     # message_id_received = response[1]
                 except (socket.timeout, Exception) as e:
-                    pass 
+                    pass
 
             # Either expiration for waiting reached or message id is correct
             if not message_id == message_id_received:
@@ -499,7 +501,7 @@ class Interface:
             axis=axis,
             command_type=SettingsControl.AutopilotForce,
             value=numpy.array(force))
-    
+
     def reset_statistics(self):
         """ Reset the interface statistics. """
         s = self.statistics
@@ -564,9 +566,9 @@ class Interface:
         return False
 
     def actuate(self, x, y, now=False):
-        """ Actuate external force command to joystick. 
-        
-            Note: 
+        """ Actuate external force command to joystick.
+
+            Note:
                 Expects (x,y) applied in ENU coordinate frame
                 according to REP105 and converts it internally to
                 corresponding aileron and elevator.

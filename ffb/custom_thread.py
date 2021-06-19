@@ -1,10 +1,14 @@
 #!/usr/bin/env python
-"""
-    Customised threading class to terminate under Windows
+""" Customised threading class to terminate under Windows. """
 
-    Author: Philipp Rothenhäusler, Stockholm 2020
 
-"""
+__author__ = "Philipp Rothenhäusler"
+__version__ = "1.0"
+__status__ = "Development"
+__copyright__ = "Copyright 2021 Philipp Rothenhäusler"
+__email__ = "philipp.rothenhaeusler@gmail.com"
+
+
 import threading
 
 

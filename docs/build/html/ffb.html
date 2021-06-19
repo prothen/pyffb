@@ -1,0 +1,574 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>ffb package &#8212; pyffb 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/guzzle.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Indices and tables" href="index.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Indices and tables"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyffb 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ffb package</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ffb package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ffb.custom_thread">ffb.custom_thread module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ffb.errors">ffb.errors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ffb.interface">ffb.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ffb.protocol">ffb.protocol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ffb">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+    
+  </div>
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Indices and tables</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ffb.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+              <li>ffb package</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="ffb-package">
+<h1>ffb package<a class="headerlink" href="#ffb-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-ffb.custom_thread">
+<span id="ffb-custom-thread-module"></span><h2>ffb.custom_thread module<a class="headerlink" href="#module-ffb.custom_thread" title="Permalink to this headline">¶</a></h2>
+<p>Customised threading class to terminate under Windows.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.custom_thread.ShutdownCompliantThread">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.custom_thread.</span></span><span class="sig-name descname"><span class="pre">ShutdownCompliantThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shutdown_request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.custom_thread.ShutdownCompliantThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.custom_thread.ShutdownCompliantThread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.custom_thread.ShutdownCompliantThread.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method representing the thread’s activity.</p>
+<p>You may override this method in a subclass. The standard run() method
+invokes the callable object passed to the object’s constructor as the
+target argument, if any, with sequential and keyword arguments taken
+from the args and kwargs arguments, respectively.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ffb.errors">
+<span id="ffb-errors-module"></span><h2>ffb.errors module<a class="headerlink" href="#module-ffb.errors" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ffb.errors.ConfigurationParametersNotLoadedError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.errors.</span></span><span class="sig-name descname"><span class="pre">ConfigurationParametersNotLoadedError</span></span><a class="headerlink" href="#ffb.errors.ConfigurationParametersNotLoadedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Indicate error if configuration is not found or loaded incomplete.</p>
+</dd></dl>
+
+</section>
+<section id="module-ffb.interface">
+<span id="ffb-interface-module"></span><h2>ffb.interface module<a class="headerlink" href="#module-ffb.interface" title="Permalink to this headline">¶</a></h2>
+<p>Interface to Brunner CLS-E force feedback joystick.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.interface.Interface">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.interface.</span></span><span class="sig-name descname"><span class="pre">Interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receiver_thread_active</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">socket</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">socket.socket</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_force_max</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autopilot_activated</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autopilot_force</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autopilot_speed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exponential_scale</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exponential_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actuation_idle_detected</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_desired_actuation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_minimum_actuation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeperiod_next_actuation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_period_next_actuation_maximum</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stamp_axes_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stamp_last_actuation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_is_enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_new_message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistics</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.activate_autopilot">
+<span class="sig-name descname"><span class="pre">activate_autopilot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.activate_autopilot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate autopilot for x and y axis based interaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.actuate">
+<span class="sig-name descname"><span class="pre">actuate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.actuate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actuate external force command to joystick.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>Expects (x,y) applied in ENU coordinate frame
+according to REP105 and converts it internally to
+corresponding aileron and elevator.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.actuate_safe">
+<span class="sig-name descname"><span class="pre">actuate_safe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.actuate_safe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safe actuation for test setups to confirm single actuation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.actuate_test">
+<span class="sig-name descname"><span class="pre">actuate_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.actuate_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time varying force actuation reference script.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.actuation_stream_is_active">
+<span class="sig-name descname"><span class="pre">actuation_stream_is_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.actuation_stream_is_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if actuation is active.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>Once detection happens variables
+for transitioning are initialised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to CLS2SIM interface.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.deactivate_autopilot">
+<span class="sig-name descname"><span class="pre">deactivate_autopilot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.deactivate_autopilot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate autopilot on both axes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.enable_autopilot">
+<span class="sig-name descname"><span class="pre">enable_autopilot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.enable_autopilot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.enable_override">
+<span class="sig-name descname"><span class="pre">enable_override</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.Axis" title="ffb.protocol.Axis"><span class="pre">ffb.protocol.Axis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.enable_override" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.exit">
+<span class="sig-name descname"><span class="pre">exit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process exit request to end interface gracefully.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.get_axes_xy">
+<span class="sig-name descname"><span class="pre">get_axes_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mark_fetched</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.get_axes_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return 2 dimensional vector for xy axis measurement.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.get_axes_xy_processed">
+<span class="sig-name descname"><span class="pre">get_axes_xy_processed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.get_axes_xy_processed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return exponential post processed xy axis measurement.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.get_position">
+<span class="sig-name descname"><span class="pre">get_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return joystick position in 2 dimensional vector in ENU frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.initialise_autopilot">
+<span class="sig-name descname"><span class="pre">initialise_autopilot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.initialise_autopilot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate autopilot for x and y axis based interaction.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ffb.interface.Interface.is_active">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_active</span></span><a class="headerlink" href="#ffb.interface.Interface.is_active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.launch_receiver_thread">
+<span class="sig-name descname"><span class="pre">launch_receiver_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.launch_receiver_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch a non-blocking receiver thread fetching data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.read_data">
+<span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.Axis" title="ffb.protocol.Axis"><span class="pre">ffb.protocol.Axis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.read_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.receive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a single axes state measurement.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.reset_statistics">
+<span class="sig-name descname"><span class="pre">reset_statistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.reset_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the interface statistics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.send_command">
+<span class="sig-name descname"><span class="pre">send_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.CommandDefinition" title="ffb.protocol.CommandDefinition"><span class="pre">ffb.protocol.CommandDefinition</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.CommandType" title="ffb.protocol.CommandType"><span class="pre">ffb.protocol.CommandType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ffb.protocol.Axis" title="ffb.protocol.Axis"><span class="pre">ffb.protocol.Axis</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.send_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return raw response data for specified command type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.set_autopilot_force">
+<span class="sig-name descname"><span class="pre">set_autopilot_force</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.Axis" title="ffb.protocol.Axis"><span class="pre">ffb.protocol.Axis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.set_autopilot_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set autopilot force for axis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.set_position">
+<span class="sig-name descname"><span class="pre">set_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.set_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set setpoint for autopilot to xy position.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.interface.Interface.update_setting">
+<span class="sig-name descname"><span class="pre">update_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.Axis" title="ffb.protocol.Axis"><span class="pre">ffb.protocol.Axis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.CommandType" title="ffb.protocol.CommandType"><span class="pre">ffb.protocol.CommandType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.interface.Interface.update_setting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ffb.protocol">
+<span id="ffb-protocol-module"></span><h2>ffb.protocol module<a class="headerlink" href="#module-ffb.protocol" title="Permalink to this headline">¶</a></h2>
+<p>Module containing command, axis and message protocol definitions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.Axis">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">Axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.protocol.Axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>Selecting X as elevator and y as aileron yields REP103 body frame.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.Axis.X">
+<span class="sig-name descname"><span class="pre">X</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#ffb.protocol.Axis.X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.Axis.Y">
+<span class="sig-name descname"><span class="pre">Y</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#ffb.protocol.Axis.Y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.Command">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><a class="headerlink" href="#ffb.protocol.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.Command.DataRead">
+<span class="sig-name descname"><span class="pre">DataRead</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandDefinition(identifier=208,</span> <span class="pre">request_format='III',</span> <span class="pre">request_labels=['Command',</span> <span class="pre">'Axis',</span> <span class="pre">'DataId'],</span> <span class="pre">response_format='HBH',</span> <span class="pre">response_labels=['PacketLength',</span> <span class="pre">'Status',</span> <span class="pre">'DeviceId',</span> <span class="pre">'Data'],</span> <span class="pre">sends_value=False,</span> <span class="pre">receives_value=True)</span></em><a class="headerlink" href="#ffb.protocol.Command.DataRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.Command.OverrideControl">
+<span class="sig-name descname"><span class="pre">OverrideControl</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandDefinition(identifier=209,</span> <span class="pre">request_format='III',</span> <span class="pre">request_labels=['Command',</span> <span class="pre">'Axis',</span> <span class="pre">'OverrideId'],</span> <span class="pre">response_format='HB',</span> <span class="pre">response_labels=['PacketLength',</span> <span class="pre">'Status'],</span> <span class="pre">sends_value=False,</span> <span class="pre">receives_value=False)</span></em><a class="headerlink" href="#ffb.protocol.Command.OverrideControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.Command.SettingsControl">
+<span class="sig-name descname"><span class="pre">SettingsControl</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandDefinition(identifier=206,</span> <span class="pre">request_format='iii',</span> <span class="pre">request_labels=['Command',</span> <span class="pre">'Axis',</span> <span class="pre">'SettingId',</span> <span class="pre">'SettingValue'],</span> <span class="pre">response_format='HB',</span> <span class="pre">response_labels=['PacketLength',</span> <span class="pre">'Status'],</span> <span class="pre">sends_value=True,</span> <span class="pre">receives_value=False)</span></em><a class="headerlink" href="#ffb.protocol.Command.SettingsControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.Command.StateControl">
+<span class="sig-name descname"><span class="pre">StateControl</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandDefinition(identifier=205,</span> <span class="pre">request_format='III',</span> <span class="pre">request_labels=['Command',</span> <span class="pre">'Axis',</span> <span class="pre">'StateCommand'],</span> <span class="pre">response_format='HBHHH',</span> <span class="pre">response_labels=['PacketLength',</span> <span class="pre">'Status',</span> <span class="pre">'DeviceId',</span> <span class="pre">'DeviceState',</span> <span class="pre">'DeviceTemperature'],</span> <span class="pre">sends_value=False,</span> <span class="pre">receives_value=True)</span></em><a class="headerlink" href="#ffb.protocol.Command.StateControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.CommandDefinition">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">CommandDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sends_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receives_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.protocol.CommandDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.CommandType">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">CommandType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#ffb.protocol.ValueConstraints" title="ffb.protocol.ValueConstraints"><span class="pre">ffb.protocol.ValueConstraints</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ValueConstraints(min=-</span> <span class="pre">inf,</span> <span class="pre">max=inf)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.protocol.CommandType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">DataRead</span></span><a class="headerlink" href="#ffb.protocol.DataRead" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.AppliedForce">
+<span class="sig-name descname"><span class="pre">AppliedForce</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=32,</span> <span class="pre">format='i',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.AppliedForce" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.AppliedForceNormalized">
+<span class="sig-name descname"><span class="pre">AppliedForceNormalized</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=33,</span> <span class="pre">format='f',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.AppliedForceNormalized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.DigitalInputs">
+<span class="sig-name descname"><span class="pre">DigitalInputs</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=48,</span> <span class="pre">format='i',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.DigitalInputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.DigitalInputsExtended">
+<span class="sig-name descname"><span class="pre">DigitalInputsExtended</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=49,</span> <span class="pre">format='H',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.DigitalInputsExtended" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.Position">
+<span class="sig-name descname"><span class="pre">Position</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=16,</span> <span class="pre">format='h',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.Position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.PositionNormalized">
+<span class="sig-name descname"><span class="pre">PositionNormalized</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=17,</span> <span class="pre">format='f',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.PositionNormalized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.DataRead.Range">
+<span class="sig-name descname"><span class="pre">Range</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=96,</span> <span class="pre">format='iiii',</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.DataRead.Range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.OverrideControl">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">OverrideControl</span></span><a class="headerlink" href="#ffb.protocol.OverrideControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>To disable all override send 0x00 as axis.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.OverrideControl.AutopilotEnableOverride">
+<span class="sig-name descname"><span class="pre">AutopilotEnableOverride</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=3,</span> <span class="pre">format=None,</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.OverrideControl.AutopilotEnableOverride" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.OverrideControl.AutopilotPositionOverride">
+<span class="sig-name descname"><span class="pre">AutopilotPositionOverride</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=4,</span> <span class="pre">format=None,</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.OverrideControl.AutopilotPositionOverride" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.OverrideControl.ScaleFactorOverride">
+<span class="sig-name descname"><span class="pre">ScaleFactorOverride</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=1,</span> <span class="pre">format=None,</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.OverrideControl.ScaleFactorOverride" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.OverrideControl.TrimPositionOverride">
+<span class="sig-name descname"><span class="pre">TrimPositionOverride</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=2,</span> <span class="pre">format=None,</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.OverrideControl.TrimPositionOverride" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.OverrideControl.VibrationOverride">
+<span class="sig-name descname"><span class="pre">VibrationOverride</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=5,</span> <span class="pre">format=None,</span> <span class="pre">value_range=ValueConstraints(min=-inf,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.OverrideControl.VibrationOverride" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">SettingsControl</span></span><a class="headerlink" href="#ffb.protocol.SettingsControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.AutopilotEnable">
+<span class="sig-name descname"><span class="pre">AutopilotEnable</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=112,</span> <span class="pre">format='B',</span> <span class="pre">value_range=ValueConstraints(min=0,</span> <span class="pre">max=1))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.AutopilotEnable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.AutopilotForce">
+<span class="sig-name descname"><span class="pre">AutopilotForce</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=80,</span> <span class="pre">format='H',</span> <span class="pre">value_range=ValueConstraints(min=5,</span> <span class="pre">max=99999))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.AutopilotForce" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.AutopilotPosition">
+<span class="sig-name descname"><span class="pre">AutopilotPosition</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=128,</span> <span class="pre">format='f',</span> <span class="pre">value_range=ValueConstraints(min=-1,</span> <span class="pre">max=1))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.AutopilotPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.AutopilotSpeed">
+<span class="sig-name descname"><span class="pre">AutopilotSpeed</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=96,</span> <span class="pre">format='H',</span> <span class="pre">value_range=ValueConstraints(min=5,</span> <span class="pre">max=10))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.AutopilotSpeed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.ForceProfile">
+<span class="sig-name descname"><span class="pre">ForceProfile</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=16,</span> <span class="pre">format='H',</span> <span class="pre">value_range=ValueConstraints(min=5,</span> <span class="pre">max=99999))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.ForceProfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.ForceScaleFactor">
+<span class="sig-name descname"><span class="pre">ForceScaleFactor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=32,</span> <span class="pre">format='H',</span> <span class="pre">value_range=ValueConstraints(min=20,</span> <span class="pre">max=999))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.ForceScaleFactor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.FrictionValue">
+<span class="sig-name descname"><span class="pre">FrictionValue</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=37,</span> <span class="pre">format='H',</span> <span class="pre">value_range=ValueConstraints(min=20,</span> <span class="pre">max=65535))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.FrictionValue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.FrictionValueEng">
+<span class="sig-name descname"><span class="pre">FrictionValueEng</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=38,</span> <span class="pre">format='f',</span> <span class="pre">value_range=ValueConstraints(min=0.1,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.FrictionValueEng" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.MoveBackEnable">
+<span class="sig-name descname"><span class="pre">MoveBackEnable</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=64,</span> <span class="pre">format='B',</span> <span class="pre">value_range=ValueConstraints(min=0,</span> <span class="pre">max=1))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.MoveBackEnable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.PositionWindow">
+<span class="sig-name descname"><span class="pre">PositionWindow</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=39,</span> <span class="pre">format='I',</span> <span class="pre">value_range=ValueConstraints(min=0,</span> <span class="pre">max=4294967296))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.PositionWindow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.ProfileMode">
+<span class="sig-name descname"><span class="pre">ProfileMode</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=48,</span> <span class="pre">format='B',</span> <span class="pre">value_range=ValueConstraints(min=0,</span> <span class="pre">max=1))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.ProfileMode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.TargetTorque">
+<span class="sig-name descname"><span class="pre">TargetTorque</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=40,</span> <span class="pre">format='h',</span> <span class="pre">value_range=ValueConstraints(min=0,</span> <span class="pre">max=65535))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.TargetTorque" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.VibrationActive">
+<span class="sig-name descname"><span class="pre">VibrationActive</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=192,</span> <span class="pre">format='B',</span> <span class="pre">value_range=ValueConstraints(min=0,</span> <span class="pre">max=1))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.VibrationActive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ffb.protocol.SettingsControl.VibrationSpeedForFastVibrations">
+<span class="sig-name descname"><span class="pre">VibrationSpeedForFastVibrations</span></span><em class="property"> <span class="pre">=</span> <span class="pre">CommandType(identifier=193,</span> <span class="pre">format='I',</span> <span class="pre">value_range=ValueConstraints(min=10,</span> <span class="pre">max=inf))</span></em><a class="headerlink" href="#ffb.protocol.SettingsControl.VibrationSpeedForFastVibrations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ffb.protocol.ValueConstraints">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ffb.protocol.</span></span><span class="sig-name descname"><span class="pre">ValueConstraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.protocol.ValueConstraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Scalar value constraint convenience object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ffb.protocol.ValueConstraints.is_satisfied">
+<span class="sig-name descname"><span class="pre">is_satisfied</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ffb.protocol.ValueConstraints.is_satisfied" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ffb">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ffb" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">Indices and tables</a>
+      </div>
+    
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Indices and tables"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyffb 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ffb package</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2021, Philipp Rothenhäusler. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
